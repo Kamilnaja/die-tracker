@@ -18,7 +18,6 @@ public class Food {
     @Column(nullable = true)
     private String imageUrl;
 
-    // Gettery i settery
     public Long getId() {
         return id;
     }
