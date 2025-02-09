@@ -1,7 +1,7 @@
-package controllers;
-
+package com.diettracker.backend.controllers;
 import com.diettracker.backend.models.Food;
 import com.diettracker.backend.repositories.FoodRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,11 +10,8 @@ import java.util.List;
 @RequestMapping("/api/food")
 public class FoodController {
 
-    private final FoodRepository foodRepository;
-
-    public FoodController(FoodRepository foodRepository) {
-        this.foodRepository = foodRepository;
-    }
+    @Autowired
+    private FoodRepository foodRepository;
 
     @GetMapping
     public List<Food> getAllFood() {
