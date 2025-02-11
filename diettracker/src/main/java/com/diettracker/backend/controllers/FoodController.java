@@ -57,4 +57,9 @@ public class FoodController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/search")
+    public List<Food> searchFoodByName(@RequestParam String name) {
+        return foodRepository.findByNameContainingIgnoreCase(name);
+    }
 }
