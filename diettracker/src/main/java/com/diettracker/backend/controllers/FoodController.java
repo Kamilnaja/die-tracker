@@ -2,7 +2,6 @@ package com.diettracker.backend.controllers;
 
 import com.diettracker.backend.models.Food;
 import com.diettracker.backend.repositories.FoodRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,8 +12,11 @@ import java.util.Optional;
 @RequestMapping("/api/food")
 public class FoodController {
 
-    @Autowired
-    private FoodRepository foodRepository;
+    private final FoodRepository foodRepository;
+
+    public FoodController(FoodRepository foodRepository) {
+        this.foodRepository = foodRepository;
+    }
 
     @GetMapping
     public List<Food> getAllFood() {
@@ -29,37 +31,24 @@ public class FoodController {
 
     @PostMapping
     public Food addFood(@RequestBody Food food) {
-        System.out.println("Dodano: " + food);
         return foodRepository.save(food);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Food> updateFood(@PathVariable Long id, @RequestBody Food newFood) {
-        System.out.println("Aktualizacja: " + newFood);
-
-        return foodRepository.findById(id)
-                .map(food -> {
-                    food.setName(newFood.getName());
-                    food.setCalories(newFood.getCalories());
-                    food.setImageUrl(newFood.getImageUrl());
-                    return ResponseEntity.ok(foodRepository.save(food));
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<Food> updateFood(@PathVariable Long id, @RequestBody Food updatedFood) {
+        if (!foodRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        updatedFood.setId(id);
+        return ResponseEntity.ok(foodRepository.save(updatedFood));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFood(@PathVariable Long id) {
-        if (foodRepository.existsById(id)) {
-            foodRepository.deleteById(id);
-            System.out.println("Usunięto: ID " + id);
-            return ResponseEntity.noContent().build();
-        } else {
+        if (!foodRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    @GetMapping("/search")
-    public List<Food> searchFoodByName(@RequestParam String name) {
-        return foodRepository.findByNameContainingIgnoreCase(name);
+        foodRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

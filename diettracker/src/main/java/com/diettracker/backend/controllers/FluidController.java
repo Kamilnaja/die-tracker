@@ -2,7 +2,6 @@ package com.diettracker.backend.controllers;
 
 import com.diettracker.backend.models.Fluid;
 import com.diettracker.backend.repositories.FluidRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,8 +12,11 @@ import java.util.Optional;
 @RequestMapping("/api/fluid")
 public class FluidController {
 
-    @Autowired
-    private FluidRepository fluidRepository;
+    private final FluidRepository fluidRepository;
+
+    public FluidController(FluidRepository fluidRepository) {
+        this.fluidRepository = fluidRepository;
+    }
 
     @GetMapping
     public List<Fluid> getAllFluids() {
@@ -29,38 +31,24 @@ public class FluidController {
 
     @PostMapping
     public Fluid addFluid(@RequestBody Fluid fluid) {
-        System.out.println("Dodano: " + fluid);
         return fluidRepository.save(fluid);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Fluid> updateFluid(@PathVariable Long id, @RequestBody Fluid newFluid) {
-        System.out.println("Aktualizacja: " + newFluid);
-
-        return fluidRepository.findById(id)
-                .map(fluid -> {
-                    fluid.setName(newFluid.getName());
-                    fluid.setVolume(newFluid.getVolume());
-                    fluid.setCalories(newFluid.getCalories());
-                    fluid.setImageUrl(newFluid.getImageUrl());
-                    return ResponseEntity.ok(fluidRepository.save(fluid));
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<Fluid> updateFluid(@PathVariable Long id, @RequestBody Fluid updatedFluid) {
+        if (!fluidRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        updatedFluid.setId(id);
+        return ResponseEntity.ok(fluidRepository.save(updatedFluid));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFluid(@PathVariable Long id) {
-        if (fluidRepository.existsById(id)) {
-            fluidRepository.deleteById(id);
-            System.out.println("Usunięto: ID " + id);
-            return ResponseEntity.noContent().build();
-        } else {
+        if (!fluidRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    @GetMapping("/search")
-    public List<Fluid> searchFluidByName(@RequestParam String name) {
-        return fluidRepository.findByNameContainingIgnoreCase(name);
+        fluidRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,38 +1,32 @@
 package com.diettracker.backend.models;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "food")
 public class Food {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
-    private int calories;
-
-    @Column(nullable = false)
-    private int protein;
-
-    @Column(nullable = false)
-    private int fats;
-
-    @Column(nullable = false)
-    private int carbs;
-
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = true)
-    private String imageUrl;
+    private double weight;
+    private double calories;
+    private double proteins;
+    private double fats;
+    private double carbs;
 
     public Food() {
-        this.createdAt = LocalDateTime.now();
+    }
+
+    public Food(String name, double weight, double calories, double proteins, double fats, double carbs) {
+        this.name = name;
+        this.weight = weight;
+        this.calories = calories;
+        this.proteins = proteins;
+        this.fats = fats;
+        this.carbs = carbs;
     }
 
     public Long getId() {
@@ -51,65 +45,43 @@ public class Food {
         this.name = name;
     }
 
-    public int getCalories() {
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public double getCalories() {
         return calories;
     }
 
-    public void setCalories(int calories) {
+    public void setCalories(double calories) {
         this.calories = calories;
     }
 
-    public int getProtein() {
-        return protein;
+    public double getProteins() {
+        return proteins;
     }
 
-    public void setProtein(int protein) {
-        this.protein = protein;
+    public void setProteins(double proteins) {
+        this.proteins = proteins;
     }
 
-    public int getFats() {
+    public double getFats() {
         return fats;
     }
 
-    public void setFats(int fats) {
+    public void setFats(double fats) {
         this.fats = fats;
     }
 
-    public int getCarbs() {
+    public double getCarbs() {
         return carbs;
     }
 
-    public void setCarbs(int carbs) {
+    public void setCarbs(double carbs) {
         this.carbs = carbs;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    @Override
-    public String toString() {
-        return "Food{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", calories=" + calories +
-                ", protein=" + protein +
-                ", fats=" + fats +
-                ", carbs=" + carbs +
-                ", createdAt=" + createdAt +
-                ", imageUrl='" + imageUrl + '\'' +
-                '}';
     }
 }
