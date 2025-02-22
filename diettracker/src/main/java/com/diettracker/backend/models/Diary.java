@@ -1,6 +1,7 @@
 package com.diettracker.backend.models;
 
 import jakarta.persistence.*;
+
 import java.util.Set;
 
 @Entity
@@ -14,8 +15,11 @@ public class Diary {
     @Enumerated(EnumType.STRING)
     private DiaryType name;
 
-    @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<DiaryFood> diaryFoods;
+//    @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private Set<DiaryFood> diaryFoods;
+
+    public Diary() {
+    }
 
     public Diary(DiaryType name) {
         this.name = name;
@@ -35,13 +39,5 @@ public class Diary {
 
     public void setName(DiaryType name) {
         this.name = name;
-    }
-
-    public Set<DiaryFood> getDiaryFoods() {
-        return diaryFoods;
-    }
-
-    public void setDiaryFoods(Set<DiaryFood> diaryFoods) {
-        this.diaryFoods = diaryFoods;
     }
 }
