@@ -4,13 +4,12 @@ package com.diettracker.backend.controllers;
 import com.diettracker.backend.dto.DiaryFoodDTO;
 import com.diettracker.backend.models.Diary;
 import com.diettracker.backend.models.DiaryFood;
-import com.diettracker.backend.models.DiaryType;
 import com.diettracker.backend.models.Food;
 import com.diettracker.backend.repositories.DiaryFoodRepository;
 import com.diettracker.backend.repositories.DiaryRepository;
 import com.diettracker.backend.requests.AddDiaryFoodRequest;
+import com.diettracker.backend.requests.CreateDiaryRequest;
 import com.diettracker.backend.services.DiaryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +31,8 @@ public class DiaryController {
     }
 
     @GetMapping
-    public List<DiaryFood> getAllDiaries() {
-        return diaryFoodRepository.findAll();
+    public List<Diary> getAllDiaries() {
+        return diaryRepository.findAll();
     }
 
     @GetMapping("/{id}")
@@ -41,6 +40,16 @@ public class DiaryController {
         Optional<Diary> diary = diaryRepository.findById(id);
         return diary.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @PostMapping("/create")
+    public ResponseEntity<Diary> createDiary(@RequestBody CreateDiaryRequest request) {
+        Diary diary = new Diary();
+        diary.setDate(request.getDate());
+
+        Diary savedDiary = diaryRepository.save(diary);
+        return ResponseEntity.ok(savedDiary);
+    }
+
 
     @PostMapping
     public ResponseEntity<DiaryFoodDTO> addFoodToDiary(@RequestBody AddDiaryFoodRequest request) {
