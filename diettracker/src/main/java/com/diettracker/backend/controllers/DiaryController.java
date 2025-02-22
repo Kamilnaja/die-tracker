@@ -2,15 +2,15 @@
 package com.diettracker.backend.controllers;
 
 import com.diettracker.backend.dto.DiaryFoodDTO;
+import com.diettracker.backend.dto.DiaryWithFoodsDTO;
 import com.diettracker.backend.models.Diary;
 import com.diettracker.backend.models.DiaryFood;
-import com.diettracker.backend.models.DiaryType;
 import com.diettracker.backend.models.Food;
 import com.diettracker.backend.repositories.DiaryFoodRepository;
 import com.diettracker.backend.repositories.DiaryRepository;
 import com.diettracker.backend.requests.AddDiaryFoodRequest;
+import com.diettracker.backend.requests.CreateDiaryRequest;
 import com.diettracker.backend.services.DiaryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,14 +32,35 @@ public class DiaryController {
     }
 
     @GetMapping
-    public List<DiaryFood> getAllDiaries() {
-        return diaryFoodRepository.findAll();
+    public List<Diary> getAllDiaries() {
+        return diaryRepository.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Diary> getDiaryById(@PathVariable Long id) {
         Optional<Diary> diary = diaryRepository.findById(id);
         return diary.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<Diary> createDiary(@RequestBody CreateDiaryRequest request) {
+        Diary diary = new Diary();
+        diary.setDate(request.getDate());
+
+        Diary savedDiary = diaryRepository.save(diary);
+        return ResponseEntity.ok(savedDiary);
+    }
+
+    @GetMapping("/with-foods")
+    public List<DiaryWithFoodsDTO> getAllDiariesWithFoods() {
+        List<Diary> diaries = diaryRepository.findAll();
+
+        return diaries.stream().map(diary -> {
+            List<DiaryFoodDTO> foodDTOs = diary.getDiaryFoods().stream()
+                    .map(this::convertToDTO)
+                    .toList();
+            return new DiaryWithFoodsDTO(diary.getId(), diary.getDate(), foodDTOs);
+        }).toList();
     }
 
     @PostMapping
