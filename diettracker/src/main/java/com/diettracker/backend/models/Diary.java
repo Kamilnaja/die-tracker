@@ -2,7 +2,7 @@ package com.diettracker.backend.models;
 
 import jakarta.persistence.*;
 
-import java.util.Set;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "diary")
@@ -15,14 +15,14 @@ public class Diary {
     @Enumerated(EnumType.STRING)
     private DiaryType name;
 
-//    @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<DiaryFood> diaryFoods;
+    private LocalDate date;
 
     public Diary() {
     }
 
     public Diary(DiaryType name) {
         this.name = name;
+        this.date = date;
     }
 
     public Long getId() {
@@ -39,5 +39,9 @@ public class Diary {
 
     public void setName(DiaryType name) {
         this.name = name;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }
